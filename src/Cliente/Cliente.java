@@ -4,9 +4,9 @@ import java.util.Scanner;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+// archivos
 // excepciones
 import java.io.IOException;
 // hebras y sockets
@@ -37,10 +37,12 @@ public class Cliente {
             mensajeterminal = inputterminal.nextLine();
 
             // veo como tratar la respuesta al comando
+            // EXIT
             if (mensajeterminal.equals("Exit")) {
                 salidaDatos.println(mensajeterminal);
                 break;
             }
+            // LS
             else if(mensajeterminal.equals("ls")){
                 salidaDatos.println(mensajeterminal);
 
@@ -57,6 +59,7 @@ public class Cliente {
                     System.out.println(mensaje);
                 }
             }
+            // GET
             else if(mensajeterminal.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
                 salidaDatos.println(mensajeterminal);
                 String archivo = mensajeterminal.substring(4);
@@ -78,6 +81,7 @@ public class Cliente {
                 fos.close();
                 //System.out.println("Hola");
             }
+            // PUT
             else if(mensajeterminal.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
                 String archivo = mensajeterminal.substring(4);
                 
@@ -115,6 +119,7 @@ public class Cliente {
                 }
 
             }
+            // CUALQUIERA, incluido el DELETE
             else{
                 salidaDatos.println(mensajeterminal);
                 mensaje = entradaDatos.nextLine();

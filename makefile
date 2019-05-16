@@ -1,8 +1,9 @@
 all: compileclient compileserver
 
 compileclient: jarclient
-
+	mv Cliente.jar ./Cliente
 compileserver: jarserver
+	mv Servidor.jar ./Servidor
 
 jarclient: classesClient
 	jar cfm Cliente.jar manifest2.mf -C build/classes/Cliente .
