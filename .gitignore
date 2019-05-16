@@ -4,6 +4,8 @@
 /build
 # Jar Files
 *.jar
-/Servidor/*.jar
-/Cliente/*.jar
+./Servidor/*.jar
+./Cliente/*.jar
 
+# archivos varios
+./Servidor/log.txt
