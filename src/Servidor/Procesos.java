@@ -2,8 +2,6 @@ package Servidor;
 // entrada y salida
 import java.util.Scanner;
 
-//import javafx.scene.chart.PieChart.Data;
-
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.DataInputStream;
@@ -11,7 +9,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedWriter;
-import java.io.*;
+import java.io.FileWriter;
 // excepciones
 import java.io.IOException;
 // hebras y sockets
@@ -63,11 +61,12 @@ public class Procesos implements Runnable{
                 ip = socket.getRemoteSocketAddress().toString(); 
                 System.out.println(ip + " " + mensaje);
             
-
+                // Exit, termina el cliente
                 if(mensaje.equals("Exit")){
                     this.socket.close();
                     break;
                 }
+                // LS
                 else if (mensaje.equals("ls")) {
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       command              "+ip+" ls";
@@ -114,10 +113,12 @@ public class Procesos implements Runnable{
                         ex.printStackTrace();
                     }
                 } 
+                // GET
                 else if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando get
                     mensaje = mensaje.substring(4); // obtengo el nombre del archivo
                     // envio el mensaje
                     
+                    // escribo en archivo
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       command              "+ip+" get "+mensaje;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -170,6 +171,7 @@ public class Procesos implements Runnable{
                         salidaDatos.println("Error al enviar el archivo " + mensaje);
                     }
                 }
+                // DELETE
                 else if(mensaje.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando delete
                     mensaje = mensaje.substring(7);
                     //System.out.println("archivo es "+mensaje);
@@ -213,10 +215,12 @@ public class Procesos implements Runnable{
                     }
                     
                 }
+                // PUT
                 else if(mensaje.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando put
                     mensaje = mensaje.substring(4);
                     int bytesread;
 
+                    // escribe en log que es un put
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       command              "+ip+" put "+mensaje;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -232,21 +236,25 @@ public class Procesos implements Runnable{
                         ex.printStackTrace();
                     }
 
+                    // VARIABLE PARA RECIBIR BYTES
                     DataInputStream entradad = new DataInputStream(socket.getInputStream());
                     fos = new FileOutputStream(mensaje);
                     
                     // recibo el tamaño del archivo a trabajar:
-                    long tamanio = Long.parseLong(entradaDatos.nextLine());
+                    long tamaño = Long.parseLong(entradaDatos.nextLine());
                     System.out.print("Tamaño archivo: ");
-                    System.out.println(tamanio);
-                    
+                    System.out.println(tamaño);
+                    // guardo en un arreglo lo que va llegando
                     byte[] buffer = new byte[1024];
-                    while (tamanio > 0 && (bytesread = entradad.read(buffer, 0, (int)Math.min(buffer.length, tamanio))) != -1) {
+                    while (tamaño > 0 && (bytesread = entradad.read(buffer, 0, (int)Math.min(buffer.length, tamaño))) != -1) {
                         fos.write(buffer, 0, bytesread);
-                        tamanio -= bytesread;
+                        tamaño -= bytesread;
                         System.out.print("Queda: ");
-                        System.out.println(tamanio);
+                        System.out.println(tamaño);
                     }
+                    fos.close();
+                    System.out.println("Termine de recibir el archivo");
+                    // escribe en log la respuesta
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       response             "+"servidor envia respuesta a "+ip;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -261,7 +269,6 @@ public class Procesos implements Runnable{
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                    fos.close();
                 }else{ 
                     salidaDatos.println("Mensaje no valido: " + mensaje);
                 }

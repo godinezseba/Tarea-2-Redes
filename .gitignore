@@ -8,4 +8,16 @@
 ./Cliente/*.jar
 
 # archivos varios
-./Servidor/log.txt
+./Servidor/*.txt
+./Servidor/*.jpeg
+./Servidor/*.pdf
+./Servidor/*.mpeg
+./Servidor/*.png
+./Servidor/*.jpg
+
+./Cliente/*.txt
+./Cliente/*.jpeg
+./Cliente/*.pdf
+./Cliente/*.mpeg
+./Cliente/*.png
+./Cliente/*.jpg

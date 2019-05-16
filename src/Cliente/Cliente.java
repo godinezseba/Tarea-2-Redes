@@ -1,9 +1,11 @@
 package Cliente;
+
 // entrada y salida
 import java.util.Scanner;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 // archivos
@@ -14,7 +16,7 @@ import java.net.Socket;
 public class Cliente {
     public static void main(String[] args) throws IOException {
         String mensaje, mensajeterminal;
-        Socket socket = new Socket("127.0.0.1", 1234);
+        Socket socket = new Socket("localhost", 1234);
         Scanner inputterminal;
         
 
@@ -98,15 +100,17 @@ public class Cliente {
                         bis.readFully(bytearray, 0, bytearray.length);
                         // imprimo por pantalla el largo de este
                         System.out.print("Tamaño archivo: ");
-                        System.out.println(file.length());
+                        System.out.println(bytearray.length);
                         // envio los datos
+                        DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 
                         // envio el largo del archivo
-                        salidaDatos.println(file.length());
+                        salidaDatos.println(bytearray.length);
                         salidaDatos.flush();
                         // envio el archivo
-                        salidaDatos.write(bytearray, 0, bytearray.length);
-                        salidaDatos.flush();
+                        dos.write(bytearray, 0, bytearray.length);
+                        
+                        dos.flush();
                         // cierro lo que no necesito
                         bis.close();
                         // termino de enviar el archivo
