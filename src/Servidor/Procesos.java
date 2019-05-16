@@ -173,6 +173,7 @@ public class Procesos implements Runnable{
                 else if(mensaje.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando delete
                     mensaje = mensaje.substring(7);
                     //System.out.println("archivo es "+mensaje);
+                    // se escribe en el log lo que se recibio
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       command              "+ip+" delete "+mensaje;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -187,6 +188,7 @@ public class Procesos implements Runnable{
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+                    // elimina el archivo
                     File file = new File("./"+mensaje);
                     if (file.delete()){ 
                         salidaDatos.println("Se elimino " + mensaje);
@@ -194,6 +196,7 @@ public class Procesos implements Runnable{
                     else {
                         salidaDatos.println("Error al eliminar el archivo " + mensaje);
                     }
+                    // escribe que se envia respuesta
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       response             "+"servidor envia respuesta a "+ip;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -231,7 +234,9 @@ public class Procesos implements Runnable{
 
                     DataInputStream entradad = new DataInputStream(socket.getInputStream());
                     fos = new FileOutputStream(mensaje);
-                    long tamanio = entradad.readLong();
+                    
+                    // recibo el tamaño del archivo a trabajar:
+                    long tamanio = Long.parseLong(entradaDatos.nextLine());
                     System.out.print("Tamaño archivo: ");
                     System.out.println(tamanio);
                     

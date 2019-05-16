@@ -1,2 +1,2 @@
 all:
-	java -jar Cliente.jar 
+	java -jar Servidor.jar 

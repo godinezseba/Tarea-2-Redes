@@ -1,8 +1,18 @@
 DATE TIME                 EVENT                DESCRIPTION
-14-05-2019 19:51:12       connection           /127.0.0.1:54312 Conexion entrante 
-14-05-2019 19:51:14       command              /127.0.0.1:54312 ls
-14-05-2019 19:51:14       response             servidor envia respuesta a /127.0.0.1:54312
-14-05-2019 19:51:23       command              /127.0.0.1:54312 get prueba4.mpeg
-14-05-2019 19:51:23       response             servidor envia respuesta a /127.0.0.1:54312
-14-05-2019 19:57:48       command              /127.0.0.1:54312 ls
-14-05-2019 19:57:48       response             servidor envia respuesta a /127.0.0.1:54312
+16-05-2019 16:16:55       connection           /127.0.0.1:42248 Conexion entrante 
+16-05-2019 16:16:57       command              /127.0.0.1:42248 ls
+16-05-2019 16:16:57       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:17:03       command              /127.0.0.1:42248 delete prueba6.jpg
+16-05-2019 16:17:03       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:18:14       command              /127.0.0.1:42248 put prueba6.jpg
+16-05-2019 16:18:14       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:18:17       command              /127.0.0.1:42248 ls
+16-05-2019 16:18:17       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:18:25       command              /127.0.0.1:42248 ls
+16-05-2019 16:18:25       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:18:58       command              /127.0.0.1:42248 delete prueba6.jpg
+16-05-2019 16:18:58       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:19:01       command              /127.0.0.1:42248 ls
+16-05-2019 16:19:01       response             servidor envia respuesta a /127.0.0.1:42248
+16-05-2019 16:19:07       command              /127.0.0.1:42248 put prueba6.jpg
+16-05-2019 16:20:49       response             servidor envia respuesta a /127.0.0.1:42248

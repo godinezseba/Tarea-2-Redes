@@ -35,13 +35,15 @@ public class Cliente {
         while(true){
             System.out.print("> ");
             mensajeterminal = inputterminal.nextLine();
-            salidaDatos.println(mensajeterminal);
 
             // veo como tratar la respuesta al comando
             if (mensajeterminal.equals("Exit")) {
+                salidaDatos.println(mensajeterminal);
                 break;
             }
             else if(mensajeterminal.equals("ls")){
+                salidaDatos.println(mensajeterminal);
+
                 int largo;
                 try {
                     largo = Integer.parseInt(entradaDatos.nextLine()); 
@@ -56,11 +58,12 @@ public class Cliente {
                 }
             }
             else if(mensajeterminal.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
-                mensajeterminal = mensajeterminal.substring(4);
+                salidaDatos.println(mensajeterminal);
+                String archivo = mensajeterminal.substring(4);
                 int bytesread;
 
                 DataInputStream entradad = new DataInputStream(socket.getInputStream());
-                fos = new FileOutputStream(mensajeterminal);
+                fos = new FileOutputStream(archivo);
                 long tamaño = entradad.readLong();
                 System.out.print("Tamaño archivo: ");
                 System.out.println(tamaño);
@@ -76,30 +79,44 @@ public class Cliente {
                 //System.out.println("Hola");
             }
             else if(mensajeterminal.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
-                mensajeterminal = mensajeterminal.substring(4); // obtengo el nombre del archivo
-                // envio el mensaje
-                try {
-                    // variables a usar
-                    File archivo = new File(mensajeterminal);
-                    byte[] bytearray = new byte[(int)archivo.length()];
-                    // entrada y salida
-                    DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
-                    bis.readFully(bytearray, 0, bytearray.length);
+                String archivo = mensajeterminal.substring(4);
+                
+                File file = new File(archivo);
+                // se checkea que el archivo existe
+                if(file.exists()){ // el archivo existe
+                    // envio el mensaje
+                    salidaDatos.println(mensajeterminal);
+                    try {
+                        // variables a usar
+                        byte[] bytearray = new byte[(int)file.length()];
+                        // guardo el archivo en un arreglo
+                        DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
+                        bis.readFully(bytearray, 0, bytearray.length);
+                        // imprimo por pantalla el largo de este
+                        System.out.print("Tamaño archivo: ");
+                        System.out.println(file.length());
+                        // envio los datos
 
-                    DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                    // envio los datos
-                    dos.writeLong(bytearray.length);                      
-                    dos.write(bytearray, 0, bytearray.length);
-                    dos.flush();
-                    // cierro lo que no necesito
-                    bis.close();
-                    // termino de enviar el archivo
-                } catch (Exception e) {
-                    System.err.println("Error en el envio del archivo");
-                    salidaDatos.println("Error al enviar el archivo " + mensaje);
+                        // envio el largo del archivo
+                        salidaDatos.println(file.length());
+                        salidaDatos.flush();
+                        // envio el archivo
+                        salidaDatos.write(bytearray, 0, bytearray.length);
+                        salidaDatos.flush();
+                        // cierro lo que no necesito
+                        bis.close();
+                        // termino de enviar el archivo
+                    } catch (Exception e) {
+                        System.err.println("Error en el envio del archivo");
+                        salidaDatos.println("Error al enviar el archivo " + mensaje);
+                    }
+                } else {
+                    System.out.println("Error: el archivo no existe");
                 }
+
             }
             else{
+                salidaDatos.println(mensajeterminal);
                 mensaje = entradaDatos.nextLine();
                 System.out.println(mensaje);
             }

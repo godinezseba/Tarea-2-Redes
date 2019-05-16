@@ -1,5 +1,9 @@
 # Object file
 *.o
+*.class
+/build
+# Jar Files
+*.jar
+/Servidor/*.jar
+/Cliente/*.jar
 
-# Ada Library Information
-*.ali
