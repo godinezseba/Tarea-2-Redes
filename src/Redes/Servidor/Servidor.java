@@ -2,22 +2,16 @@ package Redes.Servidor;
 // entrada y salida
 import java.util.Scanner;
 import java.io.PrintStream;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.*;
 
 // archivos
 import Redes.ArchivoLog;
 
 // excepciones
 import java.io.IOException;
+
 // sockets y hebras
 import java.net.ServerSocket;
 import java.net.Socket;
-//para fechas
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Servidor{
     public static void main(String[] args) throws IOException{
