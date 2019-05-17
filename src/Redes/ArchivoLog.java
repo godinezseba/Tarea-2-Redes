@@ -61,7 +61,7 @@ public class ArchivoLog {
         this.ip = ip;
     }
 
-    public void nuevaConexcion(String ip) throws IOException{
+    public synchronized void nuevaConexcion(String ip) throws IOException{
         date = new Date();
         contenido = hourdateFormat.format(date) + "       connection           " + ip + " Conexion entrante ";
         fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -72,7 +72,7 @@ public class ArchivoLog {
         this.cerrar();
     }
 
-    public void errorConexion(String ip) throws IOException{
+    public synchronized void errorConexion(String ip) throws IOException{
         date = new Date();
         //"DATE TIME                 EVENT                DESCRIPTION";
         contenido = hourdateFormat.format(date) + "     error                Conexion rechazada por " + ip;
@@ -84,7 +84,7 @@ public class ArchivoLog {
         this.cerrar();
     }
 
-    public void nuevoComando(String mensaje) throws IOException{
+    public synchronized void nuevoComando(String mensaje) throws IOException{
         date = new Date();
         contenido = hourdateFormat.format(date) + "       command              " + ip + " " + mensaje;
         fw = new FileWriter(log.getAbsoluteFile(), true);
@@ -95,7 +95,7 @@ public class ArchivoLog {
         this.cerrar();
     }
 
-    public void respuestaComando() throws IOException{
+    public synchronized void respuestaComando() throws IOException{
         date = new Date();
         contenido = hourdateFormat.format(date) + "       response             " + "servidor envia respuesta a " + ip;
         fw = new FileWriter(log.getAbsoluteFile(), true);
