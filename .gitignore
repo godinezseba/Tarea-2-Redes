@@ -4,20 +4,20 @@
 /build
 # Jar Files
 *.jar
-./Servidor/*.jar
-./Cliente/*.jar
+Servidor/*.jar
+Cliente/*.jar
 
 # archivos varios
-./Servidor/*.txt
-./Servidor/*.jpeg
-./Servidor/*.pdf
-./Servidor/*.mpeg
-./Servidor/*.png
-./Servidor/*.jpg
+Servidor/*.txt
+Servidor/*.jpeg
+Servidor/*.pdf
+Servidor/*.mpeg
+Servidor/*.png
+Servidor/*.jpg
 
-./Cliente/*.txt
-./Cliente/*.jpeg
-./Cliente/*.pdf
-./Cliente/*.mpeg
-./Cliente/*.png
-./Cliente/*.jpg
+Cliente/*.txt
+Cliente/*.jpeg
+Cliente/*.pdf
+Cliente/*.mpeg
+Cliente/*.png
+Cliente/*.jpg
