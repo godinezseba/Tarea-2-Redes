@@ -5,9 +5,6 @@ import java.util.Scanner;
 import Redes.EntradaSalida;
 import java.io.PrintStream;
 
-// para archivos
-import java.io.FileOutputStream;
-
 // excepciones
 import java.io.IOException;
 

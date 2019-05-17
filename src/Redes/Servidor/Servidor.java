@@ -6,6 +6,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.*;
 
+// archivos
+import Redes.ArchivoLog;
+
 // excepciones
 import java.io.IOException;
 // sockets y hebras
@@ -26,42 +29,21 @@ public class Servidor{
         PoolHebras piscina = null; // piscina de hebras
 
         //Archivo log
-        DateFormat hourdateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Date date = new Date();
-        String contenido = null;
         String ip = null;
-        BufferedWriter bw = null;
-        FileWriter fw = null;
-        File log = new File("log.txt");
-        if(log.exists()){
-            log.delete();
-            try {
-                log.createNewFile();
-            } catch (Exception e) {
-                System.err.println("Error al crear el archivo log.txt");
-            }
+        ArchivoLog log = null;
+        try {
+            log = new ArchivoLog();
+        } catch (Exception e) {
+            System.err.println("Error al crear el archivo: " + e);
+            System.exit(-1);
         }
-        contenido = "DATE TIME                 EVENT                DESCRIPTION";
-        fw = new FileWriter(log.getAbsoluteFile(), true);
-        bw = new BufferedWriter(fw);
-        bw.write(contenido);
-        bw.newLine();
-
+         
         // creo el socket
         try{
             serversocket = new ServerSocket(1234); 
         } catch(IOException e){
             System.err.println("No se pudo abrir el puerto");
             System.exit(-1);
-        }
-
-        try {
-            if (bw != null)
-                bw.close();
-            if (fw != null)
-                fw.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         // INICIO DEL THREADPOOL
@@ -78,21 +60,9 @@ public class Servidor{
 
                 ip = socket.getRemoteSocketAddress().toString();
                 System.out.println("Cliente en línea " + ip);
+                log.nuevaConexcion(ip);
                 //ip = socket.getRemoteSocketAddres().toString();
-                date = new Date();
-                contenido = hourdateFormat.format(date)+ "       connection           " +ip+ " Conexion entrante ";
-                fw = new FileWriter(log.getAbsoluteFile(), true);
-                bw = new BufferedWriter(fw);
-                bw.write(contenido);
-                bw.newLine();
-                try {
-                    if (bw != null)
-                        bw.close();
-                    if (fw != null)
-                        fw.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+
                 // creo las variables de entrada y salida de datos
                 entradaDatos = new Scanner(socket.getInputStream());
                 salidaDatos = new PrintStream(socket.getOutputStream()); 
@@ -105,21 +75,8 @@ public class Servidor{
 
                 System.err.println("Error en la entrada de un cliente");
                 e.printStackTrace();
-                date = new Date();
-                          //"DATE TIME                 EVENT                DESCRIPTION";
-                contenido = hourdateFormat.format(date) +"     error                Conexion rechazada por "+ ip;
-                fw = new FileWriter(log.getAbsoluteFile(), true);
-                bw = new BufferedWriter(fw);
-                bw.write(contenido + ip);
-                bw.newLine();
-                try {
-                    if (bw != null)
-                        bw.close();
-                    if (fw != null)
-                        fw.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+                log.errorConexion(ip);
+
                 socket.close();
             }
         }
