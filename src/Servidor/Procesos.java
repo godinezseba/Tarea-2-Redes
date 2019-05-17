@@ -245,14 +245,29 @@ public class Procesos implements Runnable{
                     System.out.print("Tamaño archivo: ");
                     System.out.println(tamaño);
                     // guardo en un arreglo lo que va llegando
-                    byte[] buffer = new byte[1024];
-                    while (tamaño > 0 && (bytesread = entradad.read(buffer, 0, (int)Math.min(buffer.length, tamaño))) != -1) {
-                        fos.write(buffer, 0, bytesread);
-                        tamaño -= bytesread;
-                        System.out.print("Queda: ");
-                        System.out.println(tamaño);
+
+                    byte[] bytearray = new byte[(int)tamaño];
+
+                    for (int i = 0; i < tamaño; i++) {
+                        
+                        bytearray[i] = Byte.parseByte(entradaDatos.nextLine()) ;
+                        // System.out.print("Queda: ");
+                        // System.out.println(tamaño-i);
+
+                        // salidaDatos.println(i);
+                        // salidaDatos.flush();
                     }
+                    System.out.println("Termino");
+                    fos.write(bytearray);
                     fos.close();
+                    // byte[] buffer = new byte[1024];
+                    // while (tamaño > 0 && (bytesread = entradad.read(buffer, 0, (int)Math.min(buffer.length, tamaño))) != -1) {
+                    //     fos.write(buffer, 0, bytesread);
+                    //     tamaño -= bytesread;
+                    //     System.out.print("Queda: ");
+                    //     System.out.println(tamaño);
+                    // }
+                    // fos.close();
                     System.out.println("Termine de recibir el archivo");
                     // escribe en log la respuesta
                     date = new Date();

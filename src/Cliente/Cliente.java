@@ -88,6 +88,7 @@ public class Cliente {
                 String archivo = mensajeterminal.substring(4);
                 
                 File file = new File(archivo);
+                int check;
                 // se checkea que el archivo existe
                 if(file.exists()){ // el archivo existe
                     // envio el mensaje
@@ -107,10 +108,20 @@ public class Cliente {
                         // envio el largo del archivo
                         salidaDatos.println(bytearray.length);
                         salidaDatos.flush();
-                        // envio el archivo
-                        dos.write(bytearray, 0, bytearray.length);
                         
-                        dos.flush();
+                        // envio el archivo
+                        for (int i = 0; i < bytearray.length; i++) {
+                            salidaDatos.println(bytearray[i]);
+                            salidaDatos.flush();
+                            
+                            // check = Integer.parseInt(entradaDatos.nextLine());
+                            // if (check != i) {
+                            //     System.out.println("Entre");
+                            //     dos.flush();
+                            // }
+                        }
+                        // dos.write(bytearray, 0, bytearray.length);
+                        // dos.flush();
                         // cierro lo que no necesito
                         bis.close();
                         // termino de enviar el archivo
