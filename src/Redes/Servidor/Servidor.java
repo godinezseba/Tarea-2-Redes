@@ -1,4 +1,4 @@
-package Servidor;
+package Redes.Servidor;
 // entrada y salida
 import java.util.Scanner;
 import java.io.PrintStream;

@@ -1,13 +1,12 @@
-package Servidor;
-// entrada y salida
-import java.util.Scanner;
+package Redes.Servidor;
 
+// entrada y salida
+import Redes.EntradaSalida;
+import java.util.Scanner;
 import java.io.PrintStream;
-import java.io.FileOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+
+// archivos
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 // excepciones
@@ -25,6 +24,10 @@ public class Procesos implements Runnable{
     final Scanner entradaDatos;
     final PrintStream salidaDatos;
     final Socket socket;
+    // para envio de archivos
+    private EntradaSalida redes;
+    // para escribir en el log
+
     private File log;
     private String contenido;
     private BufferedWriter bw;
@@ -37,13 +40,11 @@ public class Procesos implements Runnable{
         this.entradaDatos = entradaDatos;
         this.salidaDatos = salidaDatos;
         this.socket = socket;
+        this.redes = new EntradaSalida(entradaDatos, salidaDatos, socket);
     }
 
     public void run() {
         String mensaje;
-        // variable para envio de archivos
-        FileOutputStream fos = null;
-        File archivo;
         // handshake
         // envio un mensaje
         salidaDatos.println("Servidor: Hola Cliente");
@@ -85,7 +86,6 @@ public class Procesos implements Runnable{
                     
                     File folder = new File(".");
                     File[] ListOfFiles = folder.listFiles();
-                    // System.out.println(String.valueOf(ListOfFiles.length));
                     // entrego la cantidad de mensajes que enviare para imprimirlos
                     salidaDatos.println(String.valueOf(ListOfFiles.length));
                     
@@ -114,10 +114,7 @@ public class Procesos implements Runnable{
                     }
                 } 
                 // GET
-                else if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando get
-                    mensaje = mensaje.substring(4); // obtengo el nombre del archivo
-                    // envio el mensaje
-                    
+                else if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando get                    
                     // escribo en archivo
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       command              "+ip+" get "+mensaje;
@@ -134,41 +131,22 @@ public class Procesos implements Runnable{
                         ex.printStackTrace();
                     }
 
+                    redes.EnvioArchivo(mensaje, false);
+
+                    // termino de enviar el archivo
+                    date = new Date();
+                    contenido = hourdateFormat.format(date) +"       response             "+"servidor envia respuesta a "+ip;
+                    fw = new FileWriter(log.getAbsoluteFile(), true);
+                    bw = new BufferedWriter(fw);
+                    bw.write(contenido);
+                    bw.newLine();
                     try {
-                        // variables a usar
-                        archivo = new File(mensaje);
-                        byte[] bytearray = new byte[(int)archivo.length()];
-                        // entrada y salida
-                        // fis = new FileInputStream(archivo);
-                        DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
-                        bis.readFully(bytearray, 0, bytearray.length);
-
-                        DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                        // envio los datos
-                        dos.writeLong(bytearray.length);                      
-                        dos.write(bytearray, 0, bytearray.length);
-                        dos.flush();
-                        // cierro lo que no necesito
-                        bis.close();
-                        // termino de enviar el archivo
-                        date = new Date();
-                        contenido = hourdateFormat.format(date) +"       response             "+"servidor envia respuesta a "+ip;
-                        fw = new FileWriter(log.getAbsoluteFile(), true);
-                        bw = new BufferedWriter(fw);
-                        bw.write(contenido);
-                        bw.newLine();
-                        try {
-                            if (bw != null)
-                                bw.close();
-                            if (fw != null)
-                                fw.close();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-
-                    } catch (Exception e) {
-                        System.err.println("Error en el envio del archivo");
-                        salidaDatos.println("Error al enviar el archivo " + mensaje);
+                        if (bw != null)
+                            bw.close();
+                        if (fw != null)
+                            fw.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                 }
                 // DELETE
@@ -217,12 +195,9 @@ public class Procesos implements Runnable{
                 }
                 // PUT
                 else if(mensaje.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando put
-                    mensaje = mensaje.substring(4);
-                    int bytesread;
-
                     // escribe en log que es un put
                     date = new Date();
-                    contenido = hourdateFormat.format(date) +"       command              "+ip+" put "+mensaje;
+                    contenido = hourdateFormat.format(date) +"       command              "+ip+" put "+ mensaje;
                     fw = new FileWriter(log.getAbsoluteFile(), true);
                     bw = new BufferedWriter(fw);
                     bw.write(contenido);
@@ -236,39 +211,11 @@ public class Procesos implements Runnable{
                         ex.printStackTrace();
                     }
 
-                    // VARIABLE PARA RECIBIR BYTES
-                    DataInputStream entradad = new DataInputStream(socket.getInputStream());
-                    fos = new FileOutputStream(mensaje);
-                    
-                    // recibo el tamaño del archivo a trabajar:
-                    long tamaño = Long.parseLong(entradaDatos.nextLine());
-                    System.out.print("Tamaño archivo: ");
-                    System.out.println(tamaño);
-                    // guardo en un arreglo lo que va llegando
-
-                    byte[] bytearray = new byte[(int)tamaño];
-
-                    for (int i = 0; i < tamaño; i++) {
-                        
-                        bytearray[i] = Byte.parseByte(entradaDatos.nextLine()) ;
-                        // System.out.print("Queda: ");
-                        // System.out.println(tamaño-i);
-
-                        // salidaDatos.println(i);
-                        // salidaDatos.flush();
-                    }
-                    System.out.println("Termino");
-                    fos.write(bytearray);
-                    fos.close();
-                    // byte[] buffer = new byte[1024];
-                    // while (tamaño > 0 && (bytesread = entradad.read(buffer, 0, (int)Math.min(buffer.length, tamaño))) != -1) {
-                    //     fos.write(buffer, 0, bytesread);
-                    //     tamaño -= bytesread;
-                    //     System.out.print("Queda: ");
-                    //     System.out.println(tamaño);
-                    // }
-                    // fos.close();
-                    System.out.println("Termine de recibir el archivo");
+                    try{
+                        redes.ReciboArchivo(mensaje);
+                    }catch(Exception e){
+                        System.err.println("Error al recibir el archivo: " + e);
+                    }                    
                     // escribe en log la respuesta
                     date = new Date();
                     contenido = hourdateFormat.format(date) +"       response             "+"servidor envia respuesta a "+ip;

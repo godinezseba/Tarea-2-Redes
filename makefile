@@ -12,10 +12,10 @@ jarserver: classesServer
 	jar cfm Servidor.jar manifest1.mf -C build/classes/Servidor .
 
 classesServer: dir
-	javac -sourcepath src/ -d build/classes/Servidor src/Servidor/*.java -Xlint
+	javac -sourcepath src/ -d build/classes/Servidor src/Redes/Servidor/*.java -Xlint
 
 classesClient: dir
-	javac -sourcepath src/ -d build/classes/Cliente src/Cliente/*.java -Xlint
+	javac -sourcepath src/ -d build/classes/Cliente src/Redes/Cliente/*.java -Xlint
 
 dir:
 	if [ ! -d build/classes ]; then mkdir -p build/classes; fi

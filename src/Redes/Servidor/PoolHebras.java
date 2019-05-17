@@ -1,4 +1,4 @@
-package Servidor;
+package Redes.Servidor;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
