@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 
-public class Procesos implements Runnable{
+public class ProcesosCliente implements Runnable{
     // variables que entrega el server
     final Scanner entradaDatos;
     final PrintStream salidaDatos;
@@ -28,7 +28,7 @@ public class Procesos implements Runnable{
     private String ip;
 
     
-    public Procesos(Socket socket, Scanner entradaDatos, PrintStream salidaDatos){
+    public ProcesosCliente(Socket socket, Scanner entradaDatos, PrintStream salidaDatos){
         this.entradaDatos = entradaDatos;
         this.salidaDatos = salidaDatos;
         this.socket = socket;
@@ -37,16 +37,12 @@ public class Procesos implements Runnable{
         this.log = new ArchivoLog(ip);
     }
 
+    public String getIp(){
+        return this.ip;
+    }
+
     public void run() {
         String mensaje;
-
-        // HANDSHAKE{
-        // envio un mensaje
-        salidaDatos.println("Servidor: Hola Cliente");
-        // leo un mensaje
-        mensaje = entradaDatos.nextLine();
-        System.out.println(mensaje);
-        // }
 
         ip = socket.getRemoteSocketAddress().toString();
         
@@ -121,6 +117,7 @@ public class Procesos implements Runnable{
                     salidaDatos.println("Mensaje no valido: " + mensaje);
 
                 }
+                
             } catch (Exception e) {
                 System.err.println("No se pudo obtener el mensaje");
                 break;
@@ -129,6 +126,7 @@ public class Procesos implements Runnable{
         try {
             this.entradaDatos.close();
             this.salidaDatos.close();
+            this.socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

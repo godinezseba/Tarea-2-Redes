@@ -21,6 +21,7 @@ public class Servidor{
         PrintStream salidaDatos = null;
         ServerSocket serversocket = null;
         PoolHebras piscina = null; // piscina de hebras
+        String mensaje; // mensaje que recibo de la conexion entrante
 
         //Archivo log
         String ip = null;
@@ -61,9 +62,30 @@ public class Servidor{
                 entradaDatos = new Scanner(socket.getInputStream());
                 salidaDatos = new PrintStream(socket.getOutputStream()); 
 
-                // ahora la hebra trabaja con el cliente
-                piscina.ejecutar(new Procesos(socket, entradaDatos, salidaDatos));
-                //servidor envia respueta a socket.getremotesocketadress().tostring());
+                //HANDSHAKE
+                // ENVIO UN MENSAJE
+                salidaDatos.println("Hola");
+                // RECIBO UN MENSAJE
+                mensaje = entradaDatos.nextLine();
+                System.out.println(ip + " " + mensaje);
+
+                if (mensaje.equals("Cliente")) {
+                    // ahora la hebra trabaja con el cliente
+                    // piscinaClient.ejecutar(new ProcesosCliente(socket, entradaDatos, salidaDatos, piscinaAlma));
+                    piscina.ejecutar(new ProcesosCliente(socket, entradaDatos, salidaDatos));
+                } else if (mensaje.equals("Almacenamiento")) {
+                    // ahora la hebra trabaja con el almacenamiento
+                    // piscinaAlma.ejecutar(new ProcesosAlmacenamiento(socket, entradaDatos, salidaDatos))
+                } else{
+                    System.out.println(ip + " " + "ERROR AL REALIZAR EL HANDSHAKE");
+                    try {
+                        entradaDatos.close();
+                        salidaDatos.close();
+                        socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
             } catch (Exception e) {
 

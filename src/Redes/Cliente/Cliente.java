@@ -25,10 +25,10 @@ public class Cliente {
         
         // recibo un mensaje
         mensaje = entradaDatos.nextLine();
-        System.out.println(mensaje);  
+        System.out.println( "Servidor: " + mensaje);  
 
         // envio un mensaje
-        salidaDatos.println("Cliente: Respuesta recibida");      
+        salidaDatos.println("Cliente");      
         inputterminal = new Scanner(System.in);
         // paso de mensajes
         while(true){

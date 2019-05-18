@@ -7,11 +7,11 @@ import java.lang.Thread;
 public class PoolHebras{
     private final int nHebras;
     private final ListaHebras[] Hebras;
-    private final LinkedBlockingQueue<Runnable> Cola;
+    private final LinkedBlockingQueue<ProcesosCliente> Cola;
 
     public PoolHebras(int nHebras){
         this.nHebras = nHebras;
-        Cola = new LinkedBlockingQueue<Runnable>();
+        Cola = new LinkedBlockingQueue<ProcesosCliente>();
         Hebras = new ListaHebras[nHebras];
         
         for (int i=0; i < this.nHebras; i++){
@@ -19,7 +19,7 @@ public class PoolHebras{
             Hebras[i].start();  
         }
     }    
-    public void ejecutar(Runnable proceso){
+    public void ejecutar(ProcesosCliente proceso){
         synchronized(Cola){
             Cola.add(proceso);
             Cola.notify();
@@ -27,7 +27,7 @@ public class PoolHebras{
     }
     public class ListaHebras extends Thread{
         public void run(){
-            Runnable proceso;
+            ProcesosCliente proceso;
             while(true){
                 //System.out.println("Ocurre");
                 synchronized(Cola){
@@ -39,6 +39,7 @@ public class PoolHebras{
                         }
                     }
                     proceso = Cola.poll();
+                    System.out.println(proceso.getIp());
                 }
                 try{
                     proceso.run();
