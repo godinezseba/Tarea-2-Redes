@@ -48,7 +48,8 @@ public class Almacenamiento {
             	try {
                     alm.ReciboArchivo(mensaje);               //Se recibe una parte del archivo xx
                 } catch (Exception e) {
-                    e.getCause().printStackTrace();
+                    System.out.println("Error al recibir el archivo");
+                    e.printStackTrace();
                 }
             }
             // DELETE

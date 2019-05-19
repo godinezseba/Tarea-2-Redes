@@ -8,7 +8,10 @@ import java.util.List;
 
 // para archivos
 import Redes.ArchivoAlma;
-
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 // threads
 import java.lang.Thread;
@@ -80,9 +83,54 @@ public class PoolAlmacenamiento{
     }
 
     public void funcionPut(String archivo){
-        // ArchivoAlma.setFile() para generar una linea con el nombre del archivo
+        archivo = archivo.substring(4);
+        alma.setFile(archivo); // para generar una linea con el nombre del archivo
         // ver que hebras tenemos disponibles
+        LinkedList<ListaHebras> ipdisponible = new LinkedList<ListaHebras>();
+        for(ListaHebras var : Hebras){
+            if (var.getIp() != null) {
+                ipdisponible.add(var);
+            }
+        }
         // ir hebra por hebra mientras se divide el archivo
+        int total = 64*1024; // 64KB
+        int parte = 0; // parte a guardar
+        try {  
+            File file = new File(archivo); // archivo completo
+            
+            // guardo el archivo en un arreglo
+            byte[] bytearray = new byte[(int)file.length()];
+            DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
+            bis.readFully(bytearray, 0, bytearray.length);
+
+            // para el archivo temporal
+            File temp = new File(archivo + ".parte" + parte); // una parte del archivo
+            FileOutputStream fos = new FileOutputStream(temp);
+            alma.setIP(archivo, ipdisponible.get(parte).getIp());
+
+            // guardo temporalmente el archivo y lo envio
+            int i;
+            for (i = 0; i < file.length(); i++) {
+                if (i%total == 0 && i != 0) { // termino el archivo temp y genero otro
+                    fos.close();
+                    ipdisponible.get(parte%ipdisponible.size()).getPut(archivo+ ".parte" + parte);
+                    parte ++;
+                    temp = new File(archivo + ".parte" + parte);
+                    fos = new FileOutputStream(temp);
+                    alma.setIP(archivo, ipdisponible.get(parte%ipdisponible.size()).getIp());
+                }
+                fos.write(bytearray[i]);
+            }
+            if (i%total != 0) {
+                fos.close();
+                ipdisponible.get(parte%ipdisponible.size()).getPut(archivo+ ".parte" + parte);
+            }
+            bis.close();
+            file.delete();
+        } catch (Exception e) {
+            System.out.println("Error al enviar el archivo a las maquinas");
+            e.printStackTrace();
+        }
         // mientras se guarda hacer ArchivoAlma.setIP(file, ip),
         // para guardar que esta parte esta en esta ip
         // finalmente eliminar el archivo
@@ -146,6 +194,15 @@ public class PoolAlmacenamiento{
             if(proceso != null){
                 synchronized(proceso){
                     proceso.setOpcion("delete " + arch);
+                    proceso.run();
+                }                
+            }
+        }
+
+        public void getPut(String arch){
+            if(proceso != null){
+                synchronized(proceso){
+                    proceso.setOpcion("put " + arch);
                     proceso.run();
                 }                
             }

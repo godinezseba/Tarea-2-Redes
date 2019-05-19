@@ -48,8 +48,8 @@ public class ProcesosAlmacenamiento implements Runnable{
 
     public void run(){
         String mensaje; // respuesta del almacenamiento
-        if(this.opcion.equals("check <file>")){
-            salidaDatos.println("check <file>");
+        if(this.opcion.matches("^check [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
+            salidaDatos.println(opcion);
  
             mensaje = entradaDatos.nextLine();
             // PUEDE CAMBIAR
@@ -63,9 +63,13 @@ public class ProcesosAlmacenamiento implements Runnable{
             // algo similar a lo que sale en Cliente get
             // guardamos en el server de forma temporal el archivo.parte<i>
             // la idea es que el pool los junte de a poco
-        } else if(this.opcion.equals("put <file>")){
+        } else if(this.opcion.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
             // algo similar a lo que sale en Cliente put
             // deberia estar de forma temporal el archivo.parte<i>
+            redes.EnvioArchivo(opcion, true);
+            // elimino este archivo temporal
+            File file = new File(opcion.substring(4));
+            file.delete();
         } else if(this.opcion.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
             // algo similar a lo que sale en Cliente delete
             // y el pool elimina este elemento del archivo

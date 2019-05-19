@@ -117,7 +117,14 @@ public class ProcesosCliente implements Runnable{
                         redes.ReciboArchivo(mensaje);
                     }catch(Exception e){
                         System.err.println("Error al recibir el archivo: " + e);
-                    }                    
+                        e.printStackTrace();
+                    }
+                    try {
+                        almacenamiento.funcionPut(mensaje);
+                    } catch (Exception e) {
+                        System.err.println("Error al dividir el archivo: " + e);
+                        e.printStackTrace();
+                    }             
                     log.respuestaComando();
                 // comandos rechazados
                 }else{ 
