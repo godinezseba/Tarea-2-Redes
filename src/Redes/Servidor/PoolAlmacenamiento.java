@@ -45,9 +45,11 @@ public class PoolAlmacenamiento{
         }
 
         public void getls(){
-            if(proceso.getIp() != null){
-                proceso.setOpcion("ls");
-                proceso.notify();
+            if(proceso != null){
+                synchronized(proceso){
+                    proceso.setOpcion("ls");
+                    proceso.run();
+                }                
             }
         }
 
@@ -63,11 +65,6 @@ public class PoolAlmacenamiento{
                         }
                     }
                     proceso = Cola.poll();
-                }
-                try{
-                    proceso.run();
-                } catch(RuntimeException e){
-                    System.out.println("La ThreadPool ha sido interrumpida"+ e.getMessage());
                 }
             }
         }

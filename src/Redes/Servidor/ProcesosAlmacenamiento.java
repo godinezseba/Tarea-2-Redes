@@ -25,7 +25,7 @@ public class ProcesosAlmacenamiento implements Runnable{
     private EntradaSalida redes;
     // para manejo con el server
     private String ip;
-    private String opcion;
+    public String opcion;
     public LinkedList<String> Archivos;
 
     public ProcesosAlmacenamiento(Socket socket, Scanner entradaDatos, PrintStream salidaDatos, LinkedList<String> Archivos){
@@ -42,34 +42,22 @@ public class ProcesosAlmacenamiento implements Runnable{
         return this.ip;
     }
 
-    public synchronized void setOpcion(String opcion){
-        this.opcion = opcion;
+    public void setOpcion(String opcion){
+            this.opcion = opcion;
     }
 
     public void run(){
         String mensaje; // respuesta del almacenamiento
-
-        while (true) {
-            synchronized(opcion){
-                while(this.opcion.equals("")){
-                    try {
-                        this.wait();
-                    } catch(InterruptedException e){
-                        System.out.println("Ocurrio un error en la espera de la cola "+ e.getMessage());
-                    }
-                }
-                if(this.opcion.equals("ls")){
-                    //salidaDatos.println("ls");
-                    // algo similar al ls del cliente
-                    // altero la lista
-                    Archivos.addLast("Hola");
-                }
-                else if(this.opcion.equals("get")){
-                    // algo
-                }
-                // ...
-                opcion = "";
-            }
+        if(this.opcion.equals("ls")){
+            //salidaDatos.println("ls");
+            // algo similar al ls del cliente
+            // altero la lista
+            Archivos.addLast("Hola");
         }
+        else if(this.opcion.equals("get")){
+            // algo
+        }
+        // ...
+        opcion = "";
     }
 }

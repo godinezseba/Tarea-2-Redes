@@ -35,11 +35,10 @@ public class PoolHebras{
                         try{
                             Cola.wait();
                         } catch(InterruptedException e){
-                            System.out.println("Ocurrio un error en la espera de la cola "+ e.getMessage());
+                            System.out.println("Ocurrio un error en la espera de la cola " + e.getMessage());
                         }
                     }
                     proceso = Cola.poll();
-                    System.out.println(proceso.getIp());
                 }
                 try{
                     proceso.run();

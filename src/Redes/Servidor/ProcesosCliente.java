@@ -133,6 +133,8 @@ public class ProcesosCliente implements Runnable{
                 
             } catch (Exception e) {
                 System.err.println("No se pudo obtener el mensaje");
+                e.printStackTrace();
+                System.out.println(e.getMessage());
                 break;
             }
         }
