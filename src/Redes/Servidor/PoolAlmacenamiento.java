@@ -3,8 +3,12 @@ package Redes.Servidor;
 // Estructuras de datos
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+
+// para archivos
+import Redes.ArchivoAlma;
+
 
 // threads
 import java.lang.Thread;
@@ -14,13 +18,15 @@ public class PoolAlmacenamiento{
     private final ListaHebras[] Hebras;
     private final LinkedBlockingQueue<ProcesosAlmacenamiento> Cola;
     public  LinkedList<String> Archivos;
+    // para el manejo del archivo almacenamiento
+    private ArchivoAlma alma;
 
     public PoolAlmacenamiento(int nHebras, LinkedList<String> Archivos){
         this.nHebras = nHebras;
         Cola = new LinkedBlockingQueue<ProcesosAlmacenamiento>();
         Hebras = new ListaHebras[nHebras];
         this.Archivos = Archivos;
-
+        this.alma = new ArchivoAlma();
         for (int i=0; i < this.nHebras; i++){
             Hebras[i] = new ListaHebras();
             Hebras[i].start();  
@@ -28,10 +34,10 @@ public class PoolAlmacenamiento{
     }
 
     public LinkedList<String> funcionls(){
-        LinkedList<String> disponibles;
+        LinkedList<String> disponibles = new LinkedList<String>();
         // diccionario que te mostre antes
         // la idea es crear una clase similar a ArchivoLog
-        Hashtable<String,List<String>> archivos = ArchivoAlma.getDict();
+        HashMap<String,List<String>> archivos = alma.getDict();
 
         for (String texto : archivos.keySet()) {
             // reseteamos la lista Archivos
@@ -51,7 +57,7 @@ public class PoolAlmacenamiento{
     }
 
     public void funcionGet(String archivo){
-        Hashtable<String,List<String>> archivos = ArchivoAlma.getDict(); // igual que antes
+        HashMap<String,List<String>> archivos = alma.getDict(); // igual que antes
         List<String> ips = archivos.get(archivo);
         // recorremos la lista cada hebra obtendra una parte y aqui las juntamos
         for(String ip : ips){
@@ -78,6 +84,21 @@ public class PoolAlmacenamiento{
         // quizas sea similar a put
         // eliminarlo del archivo
         // ArchivoAlma.delete(file)
+        List<String> ips = alma.delete(archivo);
+        if(ips != null){
+            String ip;
+            for (int i = 0; i < ips.size(); i++) {
+                ip = ips.get(i);
+                System.out.println(ip);
+                for (ListaHebras var : Hebras) {
+                    if( ip.equals(var.getIp())){
+                        var.getDelete(archivo + ".part" + i);
+                        break;
+                    }
+                }
+                
+            }
+        }
     }
 
     public void ejecutar(ProcesosAlmacenamiento proceso){
@@ -92,11 +113,31 @@ public class PoolAlmacenamiento{
         public ListaHebras(){
             proceso = null;
         }
+        
+        public String getIp(){
+            if (proceso != null) {
+                // return this.proceso.getIp(); // retorna con puerto
+                //System.out.println(this.proceso.socket.getInetAddress());
+                return this.proceso.socket.getInetAddress().toString(); // retorna sin puerto
+            }
+            else{
+                return null;
+            }
+        }
 
         public void getls(){
             if(proceso != null){
                 synchronized(proceso){
                     proceso.setOpcion("ls");
+                    proceso.run();
+                }                
+            }
+        }
+
+        public void getDelete(String arch){
+            if(proceso != null){
+                synchronized(proceso){
+                    proceso.setOpcion("delete " + arch);
                     proceso.run();
                 }                
             }

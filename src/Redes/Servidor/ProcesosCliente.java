@@ -104,13 +104,8 @@ public class ProcesosCliente implements Runnable{
                     mensaje = mensaje.substring(7);
                     
                     // elimina el archivo
-                    File file = new File("./"+mensaje);
-                    if (file.delete()){ 
-                        salidaDatos.println("Se elimino " + mensaje);
-                    }
-                    else {
-                        salidaDatos.println("Error al eliminar el archivo " + mensaje);
-                    }
+                    almacenamiento.funcionDelete(mensaje);
+                    salidaDatos.println("Archivo " + mensaje + " eliminado");
 
                     log.respuestaComando();
                     

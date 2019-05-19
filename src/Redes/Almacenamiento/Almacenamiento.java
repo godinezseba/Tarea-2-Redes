@@ -51,8 +51,7 @@ public class Almacenamiento {
                     e.getCause().printStackTrace();
                 }
             }
-
-
+            // DELETE
             else if(mensaje.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
 
                 mensaje = mensaje.substring(7);
@@ -63,11 +62,10 @@ public class Almacenamiento {
                     salidaDatos.println("Se elimino " + mensaje);  //Se elimino una parte del archivo xx
                 }
                 else {
-                    salidaDatos.println("Error al eliminar el archivo " + mensaje);
+                    salidaDatos.println("Hola Seba, duerme"); // mensaje por mientras para saber que llega el mensaje
+                    // salidaDatos.println("Error al eliminar el archivo " + mensaje);
                 }
             }
-
-
             //ver si existe el archivo para llevarlo al ls
             else if (mensaje.matches("^ls [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){							
             	mensaje = mensaje.substring(3);
@@ -85,6 +83,9 @@ public class Almacenamiento {
                     }
                 }
 
+            } else{
+                System.out.println("Mensaje invalido: " + mensaje);
+                salidaDatos.println("Mensaje invalido");
             }
         }
         

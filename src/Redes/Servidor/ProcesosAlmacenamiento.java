@@ -66,11 +66,17 @@ public class ProcesosAlmacenamiento implements Runnable{
         } else if(this.opcion.equals("put <file>")){
             // algo similar a lo que sale en Cliente put
             // deberia estar de forma temporal el archivo.parte<i>
-        } else if(this.opcion.equals("delete <file>")){
+        } else if(this.opcion.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
             // algo similar a lo que sale en Cliente delete
             // y el pool elimina este elemento del archivo
+            salidaDatos.println(opcion);
+            mensaje = entradaDatos.nextLine();
+            System.out.println(mensaje);
         } else if(this.opcion.equals("Exit")){
             salidaDatos.println("Exit");
+        } else{
+            System.out.println("Opcion invalida");
+            System.out.println(opcion);
         }
         this.opcion = "";
     }

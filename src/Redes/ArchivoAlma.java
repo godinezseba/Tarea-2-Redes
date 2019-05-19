@@ -89,7 +89,7 @@ public class ArchivoAlma{
             Scanner sc = new Scanner(file);
             while (sc.hasNextLine()) {
                 linea = sc.nextLine();
-                List<String> items = Arrays.asList(linea.split("\\s*-\\s"));
+                List<String> items = Arrays.asList(linea.split("\\s*-\\s*"));
                 archivos.put(items.get(0), items.subList(1, items.size()));
             }
             sc.close();
@@ -105,11 +105,13 @@ public class ArchivoAlma{
      * Se elimina un archivo de la lista
      * @param archivo archivo a eliminar de la lista
      */
-    public void delete(String archivo){
+    public List<String> delete(String archivo){
         HashMap<String,List<String>> archivos = this.getDict();
 
-        archivos.remove(archivo);
+        List<String> temp = archivos.remove(archivo);
 
         this.escribirHash(archivos);
+
+        return temp;
     }
 }
