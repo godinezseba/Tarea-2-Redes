@@ -2,6 +2,8 @@ package Redes.Servidor;
 
 // entrada y salida
 import Redes.EntradaSalida;
+
+import java.util.LinkedList;
 import java.util.Scanner;
 import java.io.PrintStream;
 
@@ -26,12 +28,13 @@ public class ProcesosCliente implements Runnable{
     // para escribir en el log
     private ArchivoLog log;
     private String ip;
-
+    private PoolAlmacenamiento almacenamiento;
     
-    public ProcesosCliente(Socket socket, Scanner entradaDatos, PrintStream salidaDatos){
+    public ProcesosCliente(Socket socket, Scanner entradaDatos, PrintStream salidaDatos, PoolAlmacenamiento almacenamiento){
         this.entradaDatos = entradaDatos;
         this.salidaDatos = salidaDatos;
         this.socket = socket;
+        this.almacenamiento = almacenamiento;
         this.redes = new EntradaSalida(entradaDatos, salidaDatos, socket);
         this.ip = socket.getRemoteSocketAddress().toString();
         this.log = new ArchivoLog(ip);
@@ -40,7 +43,7 @@ public class ProcesosCliente implements Runnable{
     public String getIp(){
         return this.ip;
     }
-
+    
     public void run() {
         String mensaje;
 
@@ -62,21 +65,31 @@ public class ProcesosCliente implements Runnable{
                 }
                 // LS
                 else if (mensaje.equals("ls")) {
+                    // LO QUE USABAMOS ANTES
+                    // File folder = new File(".");
+                    // File[] ListOfFiles = folder.listFiles();
+                    // // entrego la cantidad de mensajes que enviare para imprimirlos
+                    // salidaDatos.println(String.valueOf(ListOfFiles.length));
                     
-                    File folder = new File(".");
-                    File[] ListOfFiles = folder.listFiles();
+                    // for (int i = 0; i < ListOfFiles.length; i++){
+                    //     if(ListOfFiles[i].isFile()){
+                    //         salidaDatos.println("Archivo "+ ListOfFiles[i].getName());
+                    //     }
+                    //     else if(ListOfFiles[i].isDirectory()){
+                    //         salidaDatos.println("Carpeta " + ListOfFiles[i].getName());
+                    //     }
+                    // }
+                    
+                    // como lo veo yo:
+                    
+                    LinkedList<String> archivos = almacenamiento.getls();
                     // entrego la cantidad de mensajes que enviare para imprimirlos
-                    salidaDatos.println(String.valueOf(ListOfFiles.length));
+                    salidaDatos.println(String.valueOf(archivos.size()));
                     
-                    for (int i = 0; i < ListOfFiles.length; i++){
-                        if(ListOfFiles[i].isFile()){
-                            salidaDatos.println("Archivo "+ ListOfFiles[i].getName());
-                        }
-                        else if(ListOfFiles[i].isDirectory()){
-                            salidaDatos.println("Carpeta " + ListOfFiles[i].getName());
-                        }
+                    for (String archivo : archivos){
+                        salidaDatos.println(archivo);
                     }
-                    
+
                     log.respuestaComando();
                 } 
                 // GET

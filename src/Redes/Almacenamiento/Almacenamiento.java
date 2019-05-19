@@ -24,44 +24,38 @@ public class Almacenamiento {
 
         EntradaSalida alm = new EntradaSalida(entradaDatos,salidaDatos,socket);
 
-
-
-
-
-
-        String mensaje, mensajeterminal;
-        Scanner inputterminal;
+        String mensaje;
         
-        
+        // HANDSHAKE
         // recibo un mensaje
-        //mensaje = entradaDatos.nextLine();
-        //System.out.println(mensaje);  
+        mensaje = entradaDatos.nextLine();
+        System.out.println(mensaje);  
 
         // envio un mensaje
-        //salidaDatos.println("Cliente: Respuesta recibida"); 
-
-
-        inputterminal = new Scanner(System.in);
-        mensajeterminal = inputterminal.nextLine();
+        salidaDatos.println("Almacenamiento"); 
 
         while(true){
-
+            mensaje = entradaDatos.nextLine();
+            System.out.println(mensaje);
             // GET
-            if(mensajeterminal.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){       
-                mensaje = mensajeterminal.substring(4);
-                alm.EnvioArchivo(mensajeterminal, true);              //se envia una parte del archivo xx 
+            if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){       
+                
+                alm.EnvioArchivo(mensaje, true);              //se envia una parte del archivo xx 
 
             }
             // PUT
-            else if(mensajeterminal.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
-            	mensaje = mensajeterminal.substring(4);
-                alm.ReciboArchivo(mensajeterminal);               //Se recibe una parte del archivo xx
+            else if(mensaje.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
+            	try {
+                    alm.ReciboArchivo(mensaje);               //Se recibe una parte del archivo xx
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
+                }
             }
 
 
-            else if(mensajeterminal.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
+            else if(mensaje.matches("^delete [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
 
-                mensaje = mensajeterminal.substring(7);
+                mensaje = mensaje.substring(7);
                 
                 // elimina el archivo
                 File file = new File("./"+mensaje);
@@ -75,7 +69,7 @@ public class Almacenamiento {
 
 
             //ver si existe el archivo para llevarlo al ls
-            else if (mensajeterminal.matches("^ls [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){							
+            else if (mensaje.matches("^ls [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){							
             	mensaje = mensaje.substring(3);
 
                 File folder = new File(".");
@@ -94,10 +88,9 @@ public class Almacenamiento {
             }
         }
         
-        System.out.println("Fin de la conexión");
-        inputterminal.close();
-        entradaDatos.close();
-        salidaDatos.close();
-        socket.close();
+        // System.out.println("Fin de la conexión");
+        // entradaDatos.close();
+        // salidaDatos.close();
+        // socket.close();
     }
 }
