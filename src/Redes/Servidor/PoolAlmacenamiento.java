@@ -79,19 +79,62 @@ public class PoolAlmacenamiento{
         return disponibles;
     }
 
-    public void funcionGet(String archivo){
-        HashMap<String,List<String>> archivos = alma.getDict(); // igual que antes
-        List<String> ips = archivos.get(archivo);
-        // recorremos la lista cada hebra obtendra una parte y aqui las juntamos
-        for(String ip : ips){
-            for (ListaHebras var : Hebras) {
-                // if ip == var.getIp
-                // var.getget
-                // break
+public void funcionGet(String archivo){
+
+        HashMap<String,List<String>> archivos = alma.getDict(); // archivo = [ip1, ip2..], ..
+        List<String> ips = archivos.get(archivo);               // ips del archivo 
+        LinkedList<ListaHebras> ipdisponible = new LinkedList<ListaHebras>();
+
+        int parte = 0;
+        int total = 0;
+
+
+
+        for (ListaHebras var : Hebras) {
+            if (var.getIp() != null){
+                ipdisponible.add(var);
             }
-            // agregar parte al archivo
         }
-        // deberiamos tener todo el archivo
+        // para el archivo temporal
+        File temp = new File(archivo + ".parte" + parte); // una parte del archivo
+        FileOutputStream fos = new FileOutputStream(temp);
+ 
+        for (int i = 0; i < archivos.get(archivo).length(); i++){        //obtengo el total de bytes de todas las partes del archivo
+
+            temp = new File(archivo + ".parte" + parte);
+            fos = new FileOutputStream(temp);
+            parte+=1;
+            total += fos.length();
+        }
+        parte = 0;
+        try {
+
+            File file = new File(archivo);  //creo el archivo con el nombre del archivo
+
+            byte[] bytearray = new byte[(int)file.length()];
+            DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
+            bis.readFully(bytearray, 0, bytearray.length);
+
+            for(i = 0; i < total; i++){
+
+                if (i == 64000) { //termino de leer una parte, luego leo otra
+                    fos.close();
+                    ipdisponible.get(parte%ipdisponible.size()).getGet(archivo+ ".parte" + parte);
+                    parte ++;
+                    temp = new File(archivo + ".parte" + parte);
+                    fos = new FileOutputStream(temp);
+                }
+                file.write(bytearray[i]);
+            }
+            bis.close();
+            file.close();
+
+        } catch (Exception e){
+            System.out.println("error al obtener el archivo");
+            e.printStackTrace();
+        }
+
+
     }
 
     public void funcionPut(String archivo){
@@ -211,6 +254,7 @@ public class PoolAlmacenamiento{
             }
         }
 
+
         public void getPut(String arch){
             if(proceso != null){
                 synchronized(proceso){
@@ -220,6 +264,16 @@ public class PoolAlmacenamiento{
             }
         }
 
+
+        public void getGet(String arch){
+            if (proceso != null){
+                synchronized(proceso){
+                    proceso.setOpcion("get " + arch);
+                    proceso.run();
+                }
+            }
+        }
+    
         public void run(){
             while(true){
                 //System.out.println("Ocurre");
