@@ -36,12 +36,13 @@ public class PoolAlmacenamiento{
         }
     }
 
-    private LinkedList<ListaHebras> getDisponibles(){
-        LinkedList<ListaHebras> disponibles = new LinkedList<ListaHebras>();
-
+    private HashMap<String, ListaHebras> getDisponibles(){
+        HashMap<String, ListaHebras> disponibles = new HashMap<String, ListaHebras>();
+        String temp;
         for (ListaHebras var : Hebras) {
-            if(var.getIp() != null){
-                disponibles.addLast(var);
+            temp = var.getIp();
+            if(temp != null){
+                disponibles.put(temp, var);
             }
         }
 
@@ -50,7 +51,9 @@ public class PoolAlmacenamiento{
 
     public LinkedList<String> funcionls(){                                  
         LinkedList<String> disponibles = new LinkedList<String>();
+        HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
         int cont;
+        ListaHebras var;
         // diccionario que te mostre antes
         // la idea es crear una clase similar a ArchivoLog
         HashMap<String,List<String>> archivos = alma.getDict();        //archivo = [ips], ...
@@ -58,28 +61,24 @@ public class PoolAlmacenamiento{
         for (String texto : archivos.keySet()) {                   //texto in archivos
             cont = 0;
             // reseteamos la lista Archivos
-            for(String ip : archivos.get(texto)){                 //ip in ips de archivos
-                for (ListaHebras var : Hebras) {                  //var  in hebras
-                    if (ip.equals(var.getIp())){                 //si calza la ip con la de la hebra
-                        cont +=1;
-                        var.getls(texto + ".part" + archivos.get(texto).indexOf(ip));  //archivo + parte + i esima parte en la lista de ips
-                        break;
-                    }
+            for (int i = 0; i < archivos.get(texto).size(); i++) {
+                var = hebrasdisp.get(archivos.get(texto).get(i)); // obtengo la hebra de esa ip
+                if(var != null){
+                    var.getls(texto + ".parte" + i); //archivo + parte + i esima parte en la lista de ips
+                    cont += 1;
+                } else{ // significa que una de las ip no esta por lo tanto se termina este ciclo
+                    break;
                 }
-
             }
             if (cont == (archivos.get(texto)).size()){
-                disponibles.add(texto);
+                disponibles.add(texto); // agregar texto a la lista disponibles
             }
             // if listaArchivo == archivos.get(text)
-            // agregar texto a la lista disponibles
-
         }
-
         return disponibles;
     }
 
-public void funcionGet(String archivo){
+    public void funcionGet(String archivo){
 
         HashMap<String,List<String>> archivos = alma.getDict(); // archivo = [ip1, ip2..], ..
         List<String> ips = archivos.get(archivo);               // ips del archivo 
@@ -141,12 +140,10 @@ public void funcionGet(String archivo){
         archivo = archivo.substring(4);
         alma.setFile(archivo); // para generar una linea con el nombre del archivo
         // ver que hebras tenemos disponibles
-        LinkedList<ListaHebras> ipdisponible = new LinkedList<ListaHebras>();
-        for(ListaHebras var : Hebras){
-            if (var.getIp() != null) {
-                ipdisponible.add(var);
-            }
-        }
+        HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
+        
+        LinkedList<String> ipdisponible = new LinkedList<String>(hebrasdisp.keySet());
+
         // ir hebra por hebra mientras se divide el archivo
         int total = 64*1024; // 64KB
         int parte = 0; // parte a guardar
@@ -161,24 +158,24 @@ public void funcionGet(String archivo){
             // para el archivo temporal
             File temp = new File(archivo + ".parte" + parte); // una parte del archivo
             FileOutputStream fos = new FileOutputStream(temp);
-            alma.setIP(archivo, ipdisponible.get(parte).getIp());
+            alma.setIP(archivo, ipdisponible.get(parte));
 
             // guardo temporalmente el archivo y lo envio
             int i;
             for (i = 0; i < file.length(); i++) {
                 if (i%total == 0 && i != 0) { // termino el archivo temp y genero otro
                     fos.close();
-                    ipdisponible.get(parte%ipdisponible.size()).getPut(archivo+ ".parte" + parte);
+                    hebrasdisp.get(ipdisponible.get(parte%ipdisponible.size())).getPut(archivo+ ".parte" + parte);
                     parte ++;
                     temp = new File(archivo + ".parte" + parte);
                     fos = new FileOutputStream(temp);
-                    alma.setIP(archivo, ipdisponible.get(parte%ipdisponible.size()).getIp());
+                    alma.setIP(archivo, ipdisponible.get(parte%ipdisponible.size()));
                 }
                 fos.write(bytearray[i]);
             }
             if (i%total != 0) {
                 fos.close();
-                ipdisponible.get(parte%ipdisponible.size()).getPut(archivo+ ".parte" + parte);
+                hebrasdisp.get(ipdisponible.get(parte%ipdisponible.size())).getPut(archivo+ ".parte" + parte);
             }
             bis.close();
             file.delete();
@@ -192,6 +189,9 @@ public void funcionGet(String archivo){
     }
 
     public void funcionDelete(String archivo){
+        // hebras disponibles para eliminar el archivo
+        HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
+        ListaHebras var;
         // quizas sea similar a put
         // eliminarlo del archivo
         // ArchivoAlma.delete(file)
@@ -200,14 +200,12 @@ public void funcionGet(String archivo){
             String ip;
             for (int i = 0; i < ips.size(); i++) {
                 ip = ips.get(i);
-                System.out.println(ip);
-                for (ListaHebras var : Hebras) {
-                    if( ip.equals(var.getIp())){
-                        var.getDelete(archivo + ".parte" + i);
-                        break;
-                    }
-                }
-                
+                var = hebrasdisp.get(ip);
+                if(var != null){
+                    var.getDelete(archivo + ".parte" + i);
+                }else{
+                    System.out.println("No se pudo eliminar el contenido de la ip: " + ip);
+                }               
             }
         }
     }
