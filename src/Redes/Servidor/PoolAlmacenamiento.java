@@ -33,20 +33,28 @@ public class PoolAlmacenamiento{
         }
     }
 
-    public LinkedList<String> funcionls(){
+    public LinkedList<String> funcionls(){                                  
         LinkedList<String> disponibles = new LinkedList<String>();
+        int cont;
         // diccionario que te mostre antes
         // la idea es crear una clase similar a ArchivoLog
-        HashMap<String,List<String>> archivos = alma.getDict();
+        HashMap<String,List<String>> archivos = alma.getDict();        //archivo = [ips], ...
 
-        for (String texto : archivos.keySet()) {
+        for (String texto : archivos.keySet()) {                   //texto in archivos
+            cont = 0;
             // reseteamos la lista Archivos
-            for(String ip : archivos.get(texto)){
-                for (ListaHebras var : Hebras) {
-                    // if ip == var.getIp
-                    // var.getls
-                    // break
+            for(String ip : archivos.get(texto)){                 //ip in ips de archivos
+                for (ListaHebras var : Hebras) {                  //var  in hebras
+                    if (ip.equals(var.getIp())){                 //si calza la ip con la de la hebra
+                        cont +=1;
+                        var.getls(texto + ".part" + archivos.get(texto).indexOf(ip));  //archivo + parte + i esima parte en la lista de ips
+                        break;
+                    }
                 }
+
+            }
+            if (cont == (archivos.get(texto)).size()){
+                disponibles.add(texto);
             }
             // if listaArchivo == archivos.get(text)
             // agregar texto a la lista disponibles
@@ -125,10 +133,10 @@ public class PoolAlmacenamiento{
             }
         }
 
-        public void getls(){
+        public void getls(String arch){                   //public void getls(String arch)
             if(proceso != null){
                 synchronized(proceso){
-                    proceso.setOpcion("ls");
+                    proceso.setOpcion("check "+ arch);   // proceso.setOpcion("check" + arch) //arch = arch .extension . part i
                     proceso.run();
                 }                
             }
