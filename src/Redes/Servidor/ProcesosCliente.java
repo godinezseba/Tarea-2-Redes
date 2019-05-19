@@ -82,7 +82,7 @@ public class ProcesosCliente implements Runnable{
                     
                     // como lo veo yo:
                     
-                    LinkedList<String> archivos = almacenamiento.getls();
+                    LinkedList<String> archivos = almacenamiento.funcionls();
                     // entrego la cantidad de mensajes que enviare para imprimirlos
                     salidaDatos.println(String.valueOf(archivos.size()));
                     

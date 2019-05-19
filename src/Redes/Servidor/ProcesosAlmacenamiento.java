@@ -48,16 +48,30 @@ public class ProcesosAlmacenamiento implements Runnable{
 
     public void run(){
         String mensaje; // respuesta del almacenamiento
-        if(this.opcion.equals("ls")){
-            //salidaDatos.println("ls");
-            // algo similar al ls del cliente
-            // altero la lista
-            Archivos.addLast("Hola");
+        if(this.opcion.equals("check <file>")){
+            salidaDatos.println("check <file>");
+ 
+            mensaje = entradaDatos.nextLine();
+            // PUEDE CAMBIAR
+            // agrego la ip a la lista si esa parte esta
+            if (mensaje.equals("true")) {
+                Archivos.addLast(ip);
+                // pienso en que el pool vea que las listas sean del mismo tamaño,
+                // de ser asi, tenemos todo el archivo
+            }
+        } else if(this.opcion.equals("get <file>")){
+            // algo similar a lo que sale en Cliente get
+            // guardamos en el server de forma temporal el archivo.parte<i>
+            // la idea es que el pool los junte de a poco
+        } else if(this.opcion.equals("put <file>")){
+            // algo similar a lo que sale en Cliente put
+            // deberia estar de forma temporal el archivo.parte<i>
+        } else if(this.opcion.equals("delete <file>")){
+            // algo similar a lo que sale en Cliente delete
+            // y el pool elimina este elemento del archivo
+        } else if(this.opcion.equals("Exit")){
+            salidaDatos.println("Exit");
         }
-        else if(this.opcion.equals("get")){
-            // algo
-        }
-        // ...
-        opcion = "";
+        this.opcion = "";
     }
 }

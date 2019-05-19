@@ -1,8 +1,12 @@
 package Redes.Servidor;
 
+// Estructuras de datos
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Hashtable;
+import java.util.List;
 
+// threads
 import java.lang.Thread;
 
 public class PoolAlmacenamiento{
@@ -23,12 +27,57 @@ public class PoolAlmacenamiento{
         }
     }
 
-    public LinkedList<String> getls(){
-        for (ListaHebras var : Hebras) {
-            var.getls();
+    public LinkedList<String> funcionls(){
+        LinkedList<String> disponibles;
+        // diccionario que te mostre antes
+        // la idea es crear una clase similar a ArchivoLog
+        Hashtable<String,List<String>> archivos = ArchivoAlma.getDict();
+
+        for (String texto : archivos.keySet()) {
+            // reseteamos la lista Archivos
+            for(String ip : archivos.get(texto)){
+                for (ListaHebras var : Hebras) {
+                    // if ip == var.getIp
+                    // var.getls
+                    // break
+                }
+            }
+            // if listaArchivo == archivos.get(text)
+            // agregar texto a la lista disponibles
+
         }
 
-        return this.Archivos;
+        return disponibles;
+    }
+
+    public void funcionGet(String archivo){
+        Hashtable<String,List<String>> archivos = ArchivoAlma.getDict(); // igual que antes
+        List<String> ips = archivos.get(archivo);
+        // recorremos la lista cada hebra obtendra una parte y aqui las juntamos
+        for(String ip : ips){
+            for (ListaHebras var : Hebras) {
+                // if ip == var.getIp
+                // var.getget
+                // break
+            }
+            // agregar parte al archivo
+        }
+        // deberiamos tener todo el archivo
+    }
+
+    public void funcionPut(String archivo){
+        // ArchivoAlma.setFile() para generar una linea con el nombre del archivo
+        // ver que hebras tenemos disponibles
+        // ir hebra por hebra mientras se divide el archivo
+        // mientras se guarda hacer ArchivoAlma.setIP(file, ip),
+        // para guardar que esta parte esta en esta ip
+        // finalmente eliminar el archivo
+    }
+
+    public void funcionDelete(String archivo){
+        // quizas sea similar a put
+        // eliminarlo del archivo
+        // ArchivoAlma.delete(file)
     }
 
     public void ejecutar(ProcesosAlmacenamiento proceso){
