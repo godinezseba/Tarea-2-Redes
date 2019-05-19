@@ -67,23 +67,18 @@ public class Almacenamiento {
                 }
             }
             //ver si existe el archivo para llevarlo al ls
-            else if (mensaje.matches("^ls [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){							
-            	mensaje = mensaje.substring(3);
+            else if (mensaje.matches("^check [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){							
+            	mensaje = mensaje.substring(6);
 
-                File folder = new File(".");
-                File[] ListOfFiles = folder.listFiles();
+                File file = new File(mensaje);
                
-                for (int i = 0; i < ListOfFiles.length; i++){
-                    if(ListOfFiles[i].getName() == mensaje){
-                        salidaDatos.println("1");
-                        break;
-                    }
-                    else {
-                        salidaDatos.println("0");
-                    }
-                }
+                salidaDatos.println(file.exists());
 
-            } else{
+            } 
+            else if (mensaje.equals("ip")) {
+                salidaDatos.println(socket.getLocalSocketAddress().toString());
+            }
+            else{
                 System.out.println("Mensaje invalido: " + mensaje);
                 salidaDatos.println("Mensaje invalido");
             }

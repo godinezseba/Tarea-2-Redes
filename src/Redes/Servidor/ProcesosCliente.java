@@ -65,23 +65,7 @@ public class ProcesosCliente implements Runnable{
                 }
                 // LS
                 else if (mensaje.equals("ls")) {
-                    // LO QUE USABAMOS ANTES
-                    // File folder = new File(".");
-                    // File[] ListOfFiles = folder.listFiles();
-                    // // entrego la cantidad de mensajes que enviare para imprimirlos
-                    // salidaDatos.println(String.valueOf(ListOfFiles.length));
-                    
-                    // for (int i = 0; i < ListOfFiles.length; i++){
-                    //     if(ListOfFiles[i].isFile()){
-                    //         salidaDatos.println("Archivo "+ ListOfFiles[i].getName());
-                    //     }
-                    //     else if(ListOfFiles[i].isDirectory()){
-                    //         salidaDatos.println("Carpeta " + ListOfFiles[i].getName());
-                    //     }
-                    // }
-                    
-                    // como lo veo yo:
-                    
+                                      
                     LinkedList<String> archivos = almacenamiento.funcionls();
                     // entrego la cantidad de mensajes que enviare para imprimirlos
                     salidaDatos.println(String.valueOf(archivos.size()));

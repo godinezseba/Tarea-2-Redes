@@ -52,28 +52,26 @@ public class PoolAlmacenamiento{
     public LinkedList<String> funcionls(){                                  
         LinkedList<String> disponibles = new LinkedList<String>();
         HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
-        int cont;
         ListaHebras var;
         // diccionario que te mostre antes
         // la idea es crear una clase similar a ArchivoLog
         HashMap<String,List<String>> archivos = alma.getDict();        //archivo = [ips], ...
 
         for (String texto : archivos.keySet()) {                   //texto in archivos
-            cont = 0;
+            this.Archivos.clear(); // lista que almacena las partes que estan
             // reseteamos la lista Archivos
             for (int i = 0; i < archivos.get(texto).size(); i++) {
                 var = hebrasdisp.get(archivos.get(texto).get(i)); // obtengo la hebra de esa ip
                 if(var != null){
                     var.getls(texto + ".parte" + i); //archivo + parte + i esima parte en la lista de ips
-                    cont += 1;
                 } else{ // significa que una de las ip no esta por lo tanto se termina este ciclo
                     break;
                 }
             }
-            if (cont == (archivos.get(texto)).size()){
+            // if listaArchivo == archivos.get(text)
+            if (this.Archivos.size() == (archivos.get(texto)).size()){
                 disponibles.add(texto); // agregar texto a la lista disponibles
             }
-            // if listaArchivo == archivos.get(text)
         }
         return disponibles;
     }
@@ -227,7 +225,13 @@ public class PoolAlmacenamiento{
             if (proceso != null) {
                 // return this.proceso.getIp(); // retorna con puerto
                 //System.out.println(this.proceso.socket.getInetAddress());
-                return this.proceso.socket.getInetAddress().toString(); // retorna sin puerto
+                String ip = this.proceso.getIp();
+                if (ip != null) {
+                    return ip; // retorna sin puerto
+                }else{
+                    proceso = null;
+                    return null;
+                }
             }
             else{
                 return null;

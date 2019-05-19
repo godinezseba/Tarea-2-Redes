@@ -39,7 +39,27 @@ public class ProcesosAlmacenamiento implements Runnable{
     }
 
     public String getIp(){
-        return this.ip;
+        // checkeo que la conexcion siga abierta
+        try {
+            this.salidaDatos.println("ip");
+            // veo si recibo respuesta
+            String mensaje = this.entradaDatos.nextLine();
+            if (mensaje.equals(this.ip)) {
+                return this.socket.getInetAddress().toString();
+            } else{
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Error al intentar recibir señal de la maquina: " + this.ip);
+            try {
+                salidaDatos.close();
+                entradaDatos.close();
+                socket.close();
+            } catch (IOException er) {
+                System.out.println("Error al cerrar la conexion con la maquina: " + this.ip);
+            }
+            return null;
+        }
     }
 
     public void setOpcion(String opcion){
@@ -76,6 +96,7 @@ public class ProcesosAlmacenamiento implements Runnable{
             salidaDatos.println(opcion);
             mensaje = entradaDatos.nextLine();
             System.out.println(mensaje);
+            
         } else if(this.opcion.equals("Exit")){
             salidaDatos.println("Exit");
         } else{
