@@ -148,7 +148,7 @@ public class PoolAlmacenamiento{
                 System.out.println(ip);
                 for (ListaHebras var : Hebras) {
                     if( ip.equals(var.getIp())){
-                        var.getDelete(archivo + ".part" + i);
+                        var.getDelete(archivo + ".parte" + i);
                         break;
                     }
                 }
