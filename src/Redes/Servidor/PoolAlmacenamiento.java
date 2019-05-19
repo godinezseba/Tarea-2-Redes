@@ -36,6 +36,18 @@ public class PoolAlmacenamiento{
         }
     }
 
+    private LinkedList<ListaHebras> getDisponibles(){
+        LinkedList<ListaHebras> disponibles = new LinkedList<ListaHebras>();
+
+        for (ListaHebras var : Hebras) {
+            if(var.getIp() != null){
+                disponibles.addLast(var);
+            }
+        }
+
+        return disponibles;
+    }
+
     public LinkedList<String> funcionls(){                                  
         LinkedList<String> disponibles = new LinkedList<String>();
         int cont;
