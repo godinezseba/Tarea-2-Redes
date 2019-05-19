@@ -65,7 +65,7 @@ public class ProcesosCliente implements Runnable{
                 }
                 // LS
                 else if (mensaje.equals("ls")) {
-                                      
+
                     LinkedList<String> archivos = almacenamiento.funcionls();
                     // entrego la cantidad de mensajes que enviare para imprimirlos
                     salidaDatos.println(String.valueOf(archivos.size()));
@@ -88,8 +88,7 @@ public class ProcesosCliente implements Runnable{
                     mensaje = mensaje.substring(7);
                     
                     // elimina el archivo
-                    almacenamiento.funcionDelete(mensaje);
-                    salidaDatos.println("Archivo " + mensaje + " eliminado");
+                    salidaDatos.println(almacenamiento.funcionDelete(mensaje)); // intenta eliminar y retorna si fue exitoso
 
                     log.respuestaComando();
                     

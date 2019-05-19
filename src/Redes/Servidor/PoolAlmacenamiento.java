@@ -186,13 +186,14 @@ public class PoolAlmacenamiento{
         // finalmente eliminar el archivo
     }
 
-    public void funcionDelete(String archivo){
+    public String funcionDelete(String archivo){
         // hebras disponibles para eliminar el archivo
         HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
         ListaHebras var;
         // quizas sea similar a put
         // eliminarlo del archivo
         // ArchivoAlma.delete(file)
+        int count = 0;
         List<String> ips = alma.delete(archivo);
         if(ips != null){
             String ip;
@@ -203,8 +204,18 @@ public class PoolAlmacenamiento{
                     var.getDelete(archivo + ".parte" + i);
                 }else{
                     System.out.println("No se pudo eliminar el contenido de la ip: " + ip);
+                    count ++;
                 }               
             }
+            if(count == ips.size()){
+                return "El archivo no pudo ser eliminado en su totalidad";
+            }
+            else{
+                return "El archivo fue eliminado con exito";
+            }
+        }
+        else{
+            return "El archivo no existe";
         }
     }
 
