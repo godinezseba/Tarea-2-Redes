@@ -1,4 +1,5 @@
 package Redes.Servidor;
+import java.util.LinkedList;
 // entrada y salida
 import java.util.Scanner;
 import java.io.PrintStream;
@@ -20,7 +21,11 @@ public class Servidor{
         Scanner entradaDatos = null;
         PrintStream salidaDatos = null;
         ServerSocket serversocket = null;
-        PoolHebras piscina = null; // piscina de hebras
+        PoolHebras piscinaClient = null; // piscina de hebras para el cliente
+        PoolAlmacenamiento piscinaAlma = null; // piscina de hebras para el almacenamiento
+        String mensaje; // mensaje que recibo de la conexion entrante
+        LinkedList<String> Archivos = new LinkedList<String>(); // lista con los archivos disponibles
+
 
         //Archivo log
         String ip = null;
@@ -40,12 +45,13 @@ public class Servidor{
             System.exit(-1);
         }
 
-        // INICIO DEL THREADPOOL
-        piscina = new PoolHebras(10);
+        // INICIO DEL THREADPOOL ALMACENAMIENTO
+        piscinaAlma = new PoolAlmacenamiento(10, Archivos);
 
-        // mkdir filein (para guardar los archivos que ingreso)
-        
+        // INICIO DEL THREADPOOL CLIENTES
+        piscinaClient = new PoolHebras(10);
 
+        // recibo entradas
         while (true) {
             System.out.println("Esperando...");
 
@@ -53,17 +59,37 @@ public class Servidor{
                 socket = serversocket.accept(); // entrada de un cliente
 
                 ip = socket.getRemoteSocketAddress().toString();
-                System.out.println("Cliente en línea " + ip);
-                log.nuevaConexcion(ip);
-                //ip = socket.getRemoteSocketAddres().toString();
-
+                System.out.println("Nueva Conexion " + ip);
+                
                 // creo las variables de entrada y salida de datos
                 entradaDatos = new Scanner(socket.getInputStream());
                 salidaDatos = new PrintStream(socket.getOutputStream()); 
 
-                // ahora la hebra trabaja con el cliente
-                piscina.ejecutar(new Procesos(socket, entradaDatos, salidaDatos));
-                //servidor envia respueta a socket.getremotesocketadress().tostring());
+                //HANDSHAKE
+                // ENVIO UN MENSAJE
+                salidaDatos.println("Hola");
+                // RECIBO UN MENSAJE
+                mensaje = entradaDatos.nextLine();
+                System.out.println(ip + " " + mensaje);
+
+                if (mensaje.equals("Cliente")) {
+                    log.nuevaConexcion(ip);
+                    // ahora la hebra trabaja con el cliente
+                    piscinaClient.ejecutar(new ProcesosCliente(socket, entradaDatos, salidaDatos, piscinaAlma));
+                    //piscina.ejecutar(new ProcesosCliente(socket, entradaDatos, salidaDatos));
+                } else if (mensaje.equals("Almacenamiento")) {
+                    // ahora la hebra trabaja con el almacenamiento
+                    piscinaAlma.ejecutar(new ProcesosAlmacenamiento(socket, entradaDatos, salidaDatos, Archivos));
+                } else{
+                    System.out.println(ip + " " + "ERROR AL REALIZAR EL HANDSHAKE");
+                    try {
+                        entradaDatos.close();
+                        salidaDatos.close();
+                        socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
             } catch (Exception e) {
 

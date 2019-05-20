@@ -14,7 +14,7 @@ import java.net.Socket;
 public class Cliente {
     public static void main(String[] args) throws IOException {
         String mensaje, mensajeterminal;
-        Socket socket = new Socket("localhost", 1234);
+        Socket socket = new Socket("localhost", 1234); // 192.168.0.19
         Scanner inputterminal;
         
         // entrada y salida de datos
@@ -25,10 +25,10 @@ public class Cliente {
         
         // recibo un mensaje
         mensaje = entradaDatos.nextLine();
-        System.out.println(mensaje);  
+        System.out.println( "Servidor: " + mensaje);  
 
         // envio un mensaje
-        salidaDatos.println("Cliente: Respuesta recibida");      
+        salidaDatos.println("Cliente");      
         inputterminal = new Scanner(System.in);
         // paso de mensajes
         while(true){
