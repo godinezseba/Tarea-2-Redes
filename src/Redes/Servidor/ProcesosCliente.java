@@ -10,6 +10,8 @@ import java.io.PrintStream;
 // archivos
 import java.io.File;
 import Redes.ArchivoLog;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 
 // excepciones
 import java.io.IOException;
@@ -78,8 +80,37 @@ public class ProcesosCliente implements Runnable{
                 } 
                 // GET
                 else if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){ // comando get  
+                    mensaje = mensaje.substring(4);
+                    long tamaño = almacenamiento.funcionGet(mensaje); // obtengo el tamaño del archivo
+                    int parte = 0;
+                    long suma = 0; //  suma de las partes enviadas
 
-                    redes.EnvioArchivo(mensaje, false);
+                    // ahora que tenemos el archivo hacemos algo "similar" a redes.EnvioArchivo(mensaje, false);
+                    System.out.print("Tamaño archivo: ");
+                    System.out.println(tamaño);
+                    salidaDatos.println(tamaño);
+
+                    // abrimos el primer archivo y lo empezamos a enviar
+                    File file = new File(mensaje + ".parte" + parte);
+                    DataInputStream bis = new DataInputStream(new FileInputStream(file));
+                    byte[] bytearray = new byte[(int)file.length()];
+
+                    for (long i = 0; i < tamaño; i = suma) {
+                        for (int j = 0; j < file.length(); j++) {
+                            suma ++;
+                            salidaDatos.println(bytearray[j]);
+                            salidaDatos.flush();
+                        }
+                        // pasamos al siguiente
+                        bis.close();
+                        file.delete();
+                        parte ++;
+                        if (suma != tamaño) {
+                            file = new File(mensaje + ".parte" + parte);
+                            bis = new DataInputStream(new FileInputStream(file));
+                            bytearray = new byte[(int)file.length()];
+                        }
+                    }
 
                     log.respuestaComando();
                 }

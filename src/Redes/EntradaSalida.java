@@ -97,6 +97,6 @@ public class EntradaSalida {
         }
         
         fos.close();
-        System.out.println("Termine de recibir el archivo");
+        System.out.println("Termine de recibir el archivo " + mensajeterminal);
     }
 }

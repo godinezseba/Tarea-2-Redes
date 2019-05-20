@@ -76,60 +76,61 @@ public class PoolAlmacenamiento{
         return disponibles;
     }
 
-    public void funcionGet(String archivo){
+    public long funcionGet(String archivo){
 
         HashMap<String,List<String>> archivos = alma.getDict(); // archivo = [ip1, ip2..], ..
         List<String> ips = archivos.get(archivo);               // ips del archivo 
-        LinkedList<ListaHebras> ipdisponible = new LinkedList<ListaHebras>();
+        HashMap<String, ListaHebras> hebrasdisp = this.getDisponibles();
+        ListaHebras var;
 
-        int parte = 0;
-        int total = 0;
+        // primero obtenemos todas las partes de las maquinas
 
+        for (int i = 0; i < ips.size(); i++){        //obtengo el total de bytes de todas las partes del archivo
 
-
-        for (ListaHebras var : Hebras) {
-            if (var.getIp() != null){
-                ipdisponible.add(var);
+            var = hebrasdisp.get(ips.get(i));
+            if (var != null) {
+                var.getGet(archivo + ".parte" + i);
+            }
+            else{ // no se podra obtener todo el archivo, por lo que lo ideal seria eliminar las cosas antes de terminar
+                System.out.println("Error al intentar comunicarce con una maquina");
+                return -1;
             }
         }
-        // para el archivo temporal
-        File temp = new File(archivo + ".parte" + parte); // una parte del archivo
-        FileOutputStream fos = new FileOutputStream(temp);
- 
-        for (int i = 0; i < archivos.get(archivo).length(); i++){        //obtengo el total de bytes de todas las partes del archivo
 
-            temp = new File(archivo + ".parte" + parte);
-            fos = new FileOutputStream(temp);
-            parte+=1;
-            total += fos.length();
+        // ahora vemos el tamaño del archivo y se lo entregamos a procesoCliente
+        long total = 0;
+
+        for (int i = 0; i < ips.size(); i++) {
+            total += new File(archivo + ".parte" + i).length();
         }
-        parte = 0;
-        try {
+        return total;
+        // parte = 0;
+        // try {
 
-            File file = new File(archivo);  //creo el archivo con el nombre del archivo
+        //     File file = new File(archivo);  //creo el archivo con el nombre del archivo
 
-            byte[] bytearray = new byte[(int)file.length()];
-            DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
-            bis.readFully(bytearray, 0, bytearray.length);
+        //     byte[] bytearray = new byte[(int)file.length()];
+        //     DataInputStream bis = new DataInputStream(new FileInputStream(archivo));
+        //     bis.readFully(bytearray, 0, bytearray.length);
 
-            for(i = 0; i < total; i++){
+        //     for(i = 0; i < total; i++){
 
-                if (i == 64000) { //termino de leer una parte, luego leo otra
-                    fos.close();
-                    ipdisponible.get(parte%ipdisponible.size()).getGet(archivo+ ".parte" + parte);
-                    parte ++;
-                    temp = new File(archivo + ".parte" + parte);
-                    fos = new FileOutputStream(temp);
-                }
-                file.write(bytearray[i]);
-            }
-            bis.close();
-            file.close();
+        //         if (i == 64000) { //termino de leer una parte, luego leo otra
+        //             fos.close();
+        //             ipdisponible.get(parte%ipdisponible.size()).getGet(archivo+ ".parte" + parte);
+        //             parte ++;
+        //             temp = new File(archivo + ".parte" + parte);
+        //             fos = new FileOutputStream(temp);
+        //         }
+        //         file.write(bytearray[i]);
+        //     }
+        //     bis.close();
+        //     file.close();
 
-        } catch (Exception e){
-            System.out.println("error al obtener el archivo");
-            e.printStackTrace();
-        }
+        // } catch (Exception e){
+        //     System.out.println("error al obtener el archivo");
+        //     e.printStackTrace();
+        // }
 
 
     }

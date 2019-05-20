@@ -40,7 +40,7 @@ public class Almacenamiento {
             // GET
             if(mensaje.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){       
                 
-                alm.EnvioArchivo(mensaje, true);              //se envia una parte del archivo xx 
+                alm.EnvioArchivo(mensaje, false);              //se envia una parte del archivo xx 
 
             }
             // PUT

@@ -79,10 +79,17 @@ public class ProcesosAlmacenamiento implements Runnable{
                 // pienso en que el pool vea que las listas sean del mismo tamaño,
                 // de ser asi, tenemos todo el archivo
             }
-        } else if(this.opcion.equals("get <file>")){
+        } else if(this.opcion.matches("^get [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
             // algo similar a lo que sale en Cliente get
             // guardamos en el server de forma temporal el archivo.parte<i>
             // la idea es que el pool los junte de a poco
+            salidaDatos.println(opcion);
+                
+            try{
+                redes.ReciboArchivo(opcion);
+            }catch(Exception e){
+                System.err.println("Error al recibir el archivo: " + e);
+            }
         } else if(this.opcion.matches("^put [a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$")){
             // algo similar a lo que sale en Cliente put
             // deberia estar de forma temporal el archivo.parte<i>
@@ -96,7 +103,7 @@ public class ProcesosAlmacenamiento implements Runnable{
             salidaDatos.println(opcion);
             mensaje = entradaDatos.nextLine();
             System.out.println(mensaje);
-            
+
         } else if(this.opcion.equals("Exit")){
             salidaDatos.println("Exit");
         } else{
