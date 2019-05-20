@@ -94,6 +94,7 @@ public class ProcesosCliente implements Runnable{
                     File file = new File(mensaje + ".parte" + parte);
                     DataInputStream bis = new DataInputStream(new FileInputStream(file));
                     byte[] bytearray = new byte[(int)file.length()];
+                    bis.readFully(bytearray, 0, bytearray.length);
 
                     for (long i = 0; i < tamaño; i = suma) {
                         for (int j = 0; j < file.length(); j++) {
@@ -109,6 +110,7 @@ public class ProcesosCliente implements Runnable{
                             file = new File(mensaje + ".parte" + parte);
                             bis = new DataInputStream(new FileInputStream(file));
                             bytearray = new byte[(int)file.length()];
+                            bis.readFully(bytearray, 0, bytearray.length);
                         }
                     }
 
