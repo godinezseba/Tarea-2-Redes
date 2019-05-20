@@ -13,9 +13,6 @@ import Redes.ArchivoLog;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 
-// excepciones
-import java.io.IOException;
-
 // hebras y sockets
 import java.net.Socket;
 
