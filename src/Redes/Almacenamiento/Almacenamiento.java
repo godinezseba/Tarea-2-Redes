@@ -18,7 +18,7 @@ public class Almacenamiento {
     public static void main(String[] args) throws IOException {
 
 
-    	Socket socket = new Socket("200.1.22.255", 1234); // 192.168.0.19
+    	Socket socket = new Socket("10.6.40.7", 1234); // 192.168.0.19
     	Scanner entradaDatos = new Scanner(socket.getInputStream()); // entrada
         PrintStream salidaDatos = new PrintStream(socket.getOutputStream()); // salida
 
