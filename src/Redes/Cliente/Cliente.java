@@ -14,7 +14,7 @@ import java.net.Socket;
 public class Cliente {
     public static void main(String[] args) throws IOException {
         String mensaje, mensajeterminal;
-        Socket socket = new Socket("200.1.22.237", 1234); // 192.168.0.19
+        Socket socket = new Socket("200.1.22.255", 1234); // 192.168.0.19
         Scanner inputterminal;
         
         // entrada y salida de datos
